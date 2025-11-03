@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NT-78 - Vintage Drum Machine reproduction by GladiTek and Regroove">
+    <meta name="theme-color" content="#f69933">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NT-78">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/nt78-icon.png">
+    <link rel="apple-touch-icon" href="/icons/nt78-icon.png">
+    <title>NT-78</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        :root {
+            --accent: #cf1a37;
+            --accent-dim: #a01528;
+            --shadow: rgba(207, 26, 55, 0.3);
+            --nt78-orange: #f69933;
+            --nt78-dark: #201d1d;
+            --nt78-brown: #51463e;
+            --nt78-olive: #3c3c34;
+            --nt78-plum: #3c343c;
+        }
+
+        .top-banner {
+            background: linear-gradient(135deg, var(--nt78-dark) 0%, #2a1a1a 50%, #1a0a0a 100%);
+            border-bottom: 3px solid var(--nt78-orange);
+        }
+
+        .banner-title {
+            color: var(--nt78-orange);
+            letter-spacing: 4px;
+            font-size: 1.3em;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, var(--nt78-dark) 0%, var(--nt78-plum) 100%);
+            border: 1px solid var(--nt78-brown);
+            border-left: 4px solid var(--nt78-orange);
+        }
+
+        .embed-section {
+            margin-bottom: 30px;
+        }
+
+        .embed-section .section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--nt78-orange);
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--nt78-brown);
+            padding-bottom: 6px;
+        }
+
+        .embed-wrapper {
+            background: var(--nt78-dark);
+            border: 1px solid var(--nt78-brown);
+            overflow: hidden;
+        }
+
+        .itch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .itch-card {
+            background: linear-gradient(135deg, var(--nt78-dark) 0%, var(--nt78-plum) 100%);
+            border: 2px solid var(--nt78-brown);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .itch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 85, 0, 0.08) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .itch-card:hover {
+            border-color: var(--nt78-orange);
+            box-shadow: 0 0 30px rgba(255, 85, 0, 0.25);
+            transform: translateY(-4px);
+        }
+
+        .itch-card:hover::before {
+            opacity: 1;
+        }
+
+        .itch-card-badge {
+            background: var(--nt78-olive);
+            padding: 0;
+            overflow: hidden;
+            border-bottom: 1px solid var(--nt78-brown);
+        }
+
+        .itch-card-badge img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .itch-card-body {
+            padding: 20px;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .itch-card-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .itch-card:hover .itch-card-title {
+            color: var(--nt78-orange);
+        }
+
+        .itch-card-desc {
+            font-size: 0.82em;
+            color: #999;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+        }
+
+        .itch-card-cta {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 7px 16px;
+            background: var(--nt78-brown);
+            border: 1px solid var(--nt78-orange);
+            color: var(--nt78-orange);
+            font-size: 0.78em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .itch-card:hover .itch-card-cta {
+            background: var(--nt78-orange);
+            color: #ffffff;
+        }
+
+        .section-label-downloads {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--nt78-orange);
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--nt78-brown);
+            padding-bottom: 6px;
+        }
+
+        .foldout {
+            margin-top: 30px;
+            border: 1px solid var(--nt78-brown);
+            background: linear-gradient(135deg, var(--nt78-dark) 0%, var(--nt78-plum) 100%);
+        }
+
+        .foldout summary {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--nt78-orange);
+            padding: 12px 16px;
+            cursor: pointer;
+            border-left: 4px solid var(--nt78-orange);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            user-select: none;
+        }
+
+        .foldout summary::-webkit-details-marker { display: none; }
+
+        .foldout summary::before {
+            content: '▶';
+            font-size: 9px;
+            transition: transform 0.2s;
+        }
+
+        .foldout[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        .foldout summary:hover {
+            color: #ffffff;
+        }
+
+        .foldout-content {
+            padding: 16px;
+            border-top: 1px solid var(--nt78-brown);
+        }
+
+        .foldout-content img {
+            width: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body class="index-page">
+    <div class="top-banner">
+        <div class="banner-title">NT-78</div>
+    </div>
+    <div class="content-wrapper">
+        <div class="container">
+
+            <div class="content-grid">
+                <div class="info-box">
+                    <p>
+                        This reproduction of a Vintage Drum Machine is created by GladiTek and Regroove using the <a href="../rsx">RS1 Synthesizer</a> engine. What started as a discusion and Proof of Concept that the Korg NTS1 mkII could do drumkits, is now a serious rhythm machine! The recording below is played using Korg NTS1 mkII and external MIDI sequencing. However, we have mapped the keyboard and preset so that it is possible to also use the device's Step Sequencer directly.
+                    </p>
+                </div>
+            </div>
+
+            <div class="embed-section">
+                <div class="section-label">Demo</div>
+                <div class="embed-wrapper">
+                    <iframe width="100%" height="600" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2309923289&color=%23cf1a37&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                    <div style="font-size: 10px; color: #cccccc; line-break: anywhere; word-break: normal; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif; font-weight: 100; padding: 6px 10px; background: var(--nt78-dark);"><a href="https://soundcloud.com/gbraad" title="gbraad / Regroove" target="_blank" style="color: #cccccc; text-decoration: none;">gbraad / Regroove</a> · <a href="https://soundcloud.com/gbraad/nt78-demo" title="NT-78 Demo on the Korg NTS1 mkII (Logue OSC)" target="_blank" style="color: #cccccc; text-decoration: none;">NT-78 Demo on the Korg NTS1 mkII (Logue OSC)</a></div>
+                </div>
+            </div>
+
+            <div class="section-label-downloads">Get NT-78</div>
+            <div class="itch-grid">
+
+                <a href="https://itchio.rgrv.nl/nt78-logue" class="itch-card" target="_blank">
+                    <div class="itch-card-badge">
+                        <img src="nt78.jpg" alt="NT-78 Vintage Drum Machine">
+                    </div>
+                    <div class="itch-card-body">
+                        <div class="itch-card-title">NT-78 for Korg NTS1 mkII</div>
+                        <div class="itch-card-desc">Custom Logue oscillator unit for the Korg NTS1 mkII</div>
+                        <span class="itch-card-cta">Download on itch.io</span>
+                    </div>
+                </a>
+
+                <a href="https://itchio.rgrv.nl/nt78-drumlogue" class="itch-card" target="_blank">
+                    <div class="itch-card-badge">
+                        <img src="nt78.jpg" alt="NT-78 Vintage Drum Machine">
+                    </div>
+                    <div class="itch-card-body">
+                        <div class="itch-card-title">NT-78 for Korg drumlogue</div>
+                        <div class="itch-card-desc">Custom Logue oscillator unit for the Korg drumlogue.</div>
+                        <span class="itch-card-cta">Download on itch.io</span>
+                    </div>
+                </a>
+
+                <a href="https://itchio.rgrv.nl/nt78-microkorg2" class="itch-card" target="_blank">
+                    <div class="itch-card-badge">
+                        <img src="nt78.jpg" alt="NT-78 Vintage Drum Machine">
+                    </div>
+                    <div class="itch-card-body">
+                        <div class="itch-card-title">NT-78 for MicroKorg2</div>
+                        <div class="itch-card-desc">Custom Logue oscillator unit for the MicroKorg2.</div>
+                        <span class="itch-card-cta">Download on itch.io</span>
+                    </div>
+                </a>
+
+                <a href="https://itchio.rgrv.nl/nt78-nts3drum" class="itch-card" target="_blank">
+                    <div class="itch-card-badge">
+                        <img src="nt78.jpg" alt="NT-78 Vintage Drum Machine">
+                    </div>
+                    <div class="itch-card-body">
+                        <div class="itch-card-title">NT-78 for Korg NTS3 kaoss pad</div>
+                        <div class="itch-card-desc">Custom Logue oscillator unit for the Korg NTS3 kaoss pad.</div>
+                        <span class="itch-card-cta">Download on itch.io</span>
+                    </div>
+                </a>
+
+                <a href="https://itchio.rgrv.nl/nt78-voicecart" class="itch-card" target="_blank">
+                    <div class="itch-card-badge">
+                        <img src="nt78.jpg" alt="NT-78 Vintage Drum Machine">
+                    </div>
+                    <div class="itch-card-body">
+                        <div class="itch-card-title">NT-78 Voice Cart</div>
+                        <div class="itch-card-desc">Voice cart for use with RS1 Synth. Brings the NT-78 drumkit sounds to the RSX framework and applications.</div>
+                        <span class="itch-card-cta">Download on itch.io</span>
+                    </div>
+                </a>
+
+            </div>
+
+            <details class="foldout">
+                <summary>Logue OSC Instructions</summary>
+                <div class="foldout-content">
+                    <img src="layout.png" alt="NT-78 Logue OSC layout and instructions">
+                </div>
+            </details>
+
+        </div>
+    </div>
+</body>
+</html>

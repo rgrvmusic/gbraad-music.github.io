@@ -1,0 +1,10 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Knob body -->
+  <circle cx="60" cy="60" r="57" fill="#2a2a2a" stroke="#444444" stroke-width="3"/>
+  <!-- Indicator needle (knob60 position - thicker and longer for icon) -->
+  <rect x="56" y="8" width="8" height="52" rx="1"
+    fill="#CF1A37"
+    transform="rotate(122.14 60 60)" />
+  <!-- Knob center cap -->
+  <circle cx="60" cy="60" r="22" fill="#555555"/>
+</svg>

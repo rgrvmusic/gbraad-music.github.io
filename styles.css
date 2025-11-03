@@ -1,0 +1,1271 @@
+/* ============================================================
+   REGROOVE AUDIO TOOLS - SHARED STYLES
+   ============================================================ */
+
+/* CSS Variables */
+:root {
+    --bg-primary: #000000;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --accent: #CF1A37;
+    --accent-dim: #a01528;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --border: #333333;
+    --shadow: rgba(207, 26, 55, 0.3);
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Top Banner */
+.top-banner {
+    background: var(--accent);
+    padding: 0 20px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.back-button:hover {
+    transform: translateX(-3px);
+}
+
+.banner-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Section Styles */
+.section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.control-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.control-section:fullscreen {
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.control-section:fullscreen .effects-grid {
+    flex: 1;
+    overflow: hidden;
+    gap: 20px;
+    min-height: 0;
+}
+
+/* Model 1 Section: 2x2 grid (4 effects) */
+#model1Section:fullscreen .effects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: min(2vw, 2vh);
+    align-content: center;
+    justify-content: center;
+}
+
+/* Essential Effects: 2x2 grid (4 effects) */
+#essentialEffectsSection:fullscreen .effects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: min(2vw, 2vh);
+    align-content: center;
+    justify-content: center;
+}
+
+/* Additional Effects: 3 columns responsive grid */
+#additionalEffectsSection:fullscreen .effects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(30vw, 400px), 1fr));
+    gap: min(2vw, 2vh);
+    overflow: auto;
+}
+
+/* Make effect cards fill available space in fullscreen */
+.control-section:fullscreen .effect-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.control-section:fullscreen .effect-header {
+    flex-shrink: 0;
+}
+
+/* Center the knobs container within the effect card */
+.control-section:fullscreen .effect-card > div[style*="display: flex"] {
+    justify-content: center !important;
+    align-items: center !important;
+    flex: 1;
+}
+
+/* Enlarge knobs/controls in fullscreen for better touch */
+/* Default: multiple knobs (3+) */
+.control-section:fullscreen pad-knob {
+    width: min(12vw, 12vh, 180px) !important;
+    height: min(15vw, 15vh, 220px) !important;
+    font-size: 1.1em;
+}
+
+/* 2 knobs in an effect - make them bigger */
+/* Use :nth-last-of-type to count only pad-knob elements, ignoring LEDs */
+.control-section:fullscreen .effect-card pad-knob:nth-last-of-type(2):nth-of-type(1),
+.control-section:fullscreen .effect-card pad-knob:nth-last-of-type(1):nth-of-type(2) {
+    width: min(18vw, 18vh, 250px) !important;
+    height: min(22vw, 22vh, 300px) !important;
+    font-size: 1.3em;
+}
+
+/* 1 knob in an effect - make it bigger for easy touch control */
+.control-section:fullscreen .effect-card pad-knob:only-of-type {
+    width: min(25vw, 25vh, 320px) !important;
+    height: min(30vw, 30vh, 380px) !important;
+    font-size: 1.5em;
+}
+
+/* Better spacing for effect cards with fewer knobs */
+.control-section:fullscreen .effect-card > div[style*="display: flex"] {
+    gap: max(20px, 3vw);
+    padding: 2vh 2vw;
+}
+
+.control-section:fullscreen::after {
+    content: '✕';
+    display: block;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: var(--text-primary);
+    opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s;
+    pointer-events: auto;
+    background: rgba(207, 26, 55, 0.8);
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    font-weight: bold;
+}
+
+.control-section:fullscreen::after:hover {
+    opacity: 1;
+    background: rgba(207, 26, 55, 1);
+}
+
+.section-title {
+    color: #0066FF;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fullscreen-btn {
+    background: var(--bg-tertiary);
+    color: #0066FF;
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    text-transform: none;
+}
+
+.fullscreen-btn:hover {
+    border-color: #0066FF;
+    background: #3a3a3a;
+    color: #CF1A37;
+}
+
+/* Hide fullscreen button when section is in fullscreen */
+.control-section:fullscreen .fullscreen-btn {
+    display: none;
+}
+
+.drum-pads:fullscreen .fullscreen-btn {
+    display: none;
+}
+
+.keyboard-container:fullscreen .fullscreen-btn {
+    display: none;
+}
+
+/* Common Controls */
+button, select {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+}
+
+button:hover, select:hover {
+    border-color: #4a4a4a;
+    background: #3a3a3a;
+}
+
+button:active {
+    background: #0066FF;
+    color: #fff;
+}
+
+button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    border-color: var(--border);
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+/* Visualizer Containers */
+.visualizer-container {
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    height: 150px;
+}
+
+.visualizer-container:hover {
+    border-color: var(--accent);
+}
+
+.visualizer-container:fullscreen {
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 0;
+}
+
+.visualizer-container:fullscreen canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+/* Visualizer control buttons */
+.viz-popout-btn,
+.viz-fullscreen-btn {
+    position: absolute;
+    top: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--text-secondary);
+    border: none;
+    padding: 4px 8px;
+    border-radius: 2px;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s, color 0.2s;
+    z-index: 10;
+}
+
+.viz-popout-btn {
+    right: 40px;
+}
+
+.viz-fullscreen-btn {
+    right: 8px;
+}
+
+.viz-popout-btn:hover,
+.viz-fullscreen-btn:hover {
+    opacity: 1;
+    color: var(--accent);
+}
+
+/* Toggle button for VU/Freq switch */
+.viz-toggle-btn {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 10px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s, border-color 0.2s;
+    z-index: 10;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.viz-toggle-btn:hover {
+    opacity: 1;
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Hide visualizer buttons when in fullscreen */
+.visualizer-container:fullscreen .viz-popout-btn,
+.visualizer-container:fullscreen .viz-fullscreen-btn {
+    display: none;
+}
+
+.visualizer-container:fullscreen::after {
+    content: '✕';
+    display: block;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 10px 15px;
+    background: rgba(207, 26, 55, 0.8);
+    color: white;
+    border-radius: 4px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s, background 0.2s;
+    cursor: pointer;
+    z-index: 1000;
+    font-weight: bold;
+}
+
+.visualizer-container:fullscreen::after:hover {
+    opacity: 1;
+    background: rgba(207, 26, 55, 1);
+}
+
+/* Canvas */
+canvas {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    display: block;
+    border: none;
+    border-radius: 0;
+}
+
+/* Info Text */
+.info {
+    font-size: 11px;
+    color: #666;
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   INDEX PAGE - LAUNCHER
+   ============================================================ */
+
+body.index-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.index-page .container {
+    max-width: 1200px;
+}
+
+.launcher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+    gap: 20px;
+}
+
+.launcher-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    padding: 40px 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.launcher-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, var(--accent-dim) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.launcher-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 30px var(--shadow);
+    transform: translateY(-5px);
+}
+
+.launcher-card:hover::before {
+    opacity: 0.1;
+}
+
+.launcher-card-content {
+    position: relative;
+    z-index: 1;
+}
+
+.launcher-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    display: block;
+    background-image: url('./favicon.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-size: 0;
+}
+
+.launcher-title {
+    font-size: 1.4em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.launcher-card:hover .launcher-title {
+    color: var(--accent);
+}
+
+.launcher-description {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+}
+
+
+/* ============================================================
+   PLAYER PAGE - EFFECTS TESTER
+   ============================================================ */
+
+h1 {
+    font-size: 2.5em;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #0066FF;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-bar {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-size: 0.85em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-bar.wasm {
+    border-color: #0066FF;
+    color: #0066FF;
+}
+
+.status-bar.fallback {
+    border-color: #ff9900;
+    color: #ff9900;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.controls-grid button,
+.controls-grid select {
+    width: 100%;
+}
+
+.file-input {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-input input[type=file] {
+    position: absolute;
+    font-size: 100px;
+    opacity: 0;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+.effects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.effect-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 15px;
+    transition: all 0.3s;
+}
+
+.effect-card.enabled {
+    border-color: #CF1A37;
+    box-shadow: 0 0 15px rgba(207, 26, 55, 0.3);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, #2a1a1a 100%);
+}
+
+.effect-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.effect-title {
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+}
+
+.effect-card.enabled .effect-title {
+    color: #CF1A37;
+}
+
+.toggle-switch {
+    width: 50px;
+    height: 24px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: var(--text-secondary);
+    left: 2px;
+    top: 2px;
+    transition: all 0.3s;
+}
+
+.toggle-switch.active {
+    background: #a01528;
+    border-color: #CF1A37;
+}
+
+.toggle-switch.active::after {
+    left: 28px;
+    background: #CF1A37;
+}
+
+.param-control {
+    margin-bottom: 12px;
+}
+
+.param-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+}
+
+.param-value {
+    color: #CF1A37;
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #CF1A37;
+    cursor: pointer;
+    border: 1px solid #CF1A37;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #CF1A37;
+    cursor: pointer;
+    border: 1px solid #CF1A37;
+}
+
+pad-knob {
+    display: inline-block;
+}
+
+.device-selector {
+    margin-top: 10px;
+}
+
+.device-selector select {
+    width: 100%;
+}
+
+.modmed-button {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 60px;
+    box-sizing: border-box;
+}
+
+.modmed-button:hover {
+    background: #3a3a3a;
+}
+
+.modmed-button:active {
+    transform: scale(0.95);
+}
+
+.modmed-channel-button {
+    background: #00AA00;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 60px;
+    box-sizing: border-box;
+}
+
+.modmed-channel-button:hover {
+    background: #00FF00;
+}
+
+.modmed-channel-button.muted {
+    background: #AA0000;
+}
+
+.modmed-channel-button.muted:hover {
+    background: #FF0000;
+}
+
+.modmed-channel-button:active {
+    transform: scale(0.95);
+}
+
+.modmed-loop-button {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 60px;
+    box-sizing: border-box;
+}
+
+.modmed-loop-button:hover {
+    background: #3a3a3a;
+}
+
+.modmed-loop-button.active {
+    background: #AAAA00;
+    color: var(--text-primary);
+}
+
+.modmed-loop-button.active:hover {
+    background: #FFFF00;
+    color: var(--text-primary);
+}
+
+.modmed-loop-button:active {
+    transform: scale(0.95);
+}
+
+
+/* ============================================================
+   SYNTH PAGE - SYNTH TESTER
+   ============================================================ */
+
+.midi-source {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.midi-source button,
+.midi-source select {
+    width: 100%;
+}
+
+.synth-engines {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.synth-engines button.active {
+    background: #CF1A37;
+    border-color: #CF1A37;
+}
+
+.viz-container {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* freq-viz is now a canvas visualizer - DIV styles removed */
+
+.drum-pads {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    position: relative;
+    padding: 15px;
+    background: var(--bg-primary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: 4px;
+}
+
+.drum-pads:hover {
+    border-color: #4a4a4a;
+}
+
+.drum-pads:fullscreen {
+    background: var(--bg-primary);
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: min(1.5vw, 1.5vh);
+    padding: min(2vw, 2vh);
+    border-radius: 0;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.drum-pads:fullscreen .drum-pad {
+    font-size: clamp(12px, 2vmin, 20px);
+    aspect-ratio: 1;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.drum-pads:fullscreen::after {
+    content: '✕';
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: var(--text-primary);
+    opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s;
+    pointer-events: auto;
+    background: rgba(207, 26, 55, 0.8);
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    font-weight: bold;
+}
+
+.drum-pads:fullscreen::after:hover {
+    opacity: 1;
+    background: rgba(207, 26, 55, 1);
+}
+
+.drum-pad {
+    aspect-ratio: 1;
+    background: var(--bg-tertiary);
+    border: 2px solid #3a3a3a;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+    transition: all 0.1s;
+}
+
+.drum-pad:hover {
+    border-color: #0066FF;
+}
+
+.drum-pad:active, .drum-pad.active {
+    background: #CF1A37;
+    border-color: #ff3333;
+    transform: scale(0.95);
+}
+
+.drum-pad-name {
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.drum-pad-note {
+    font-size: 10px;
+    color: #666;
+}
+
+.status {
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+}
+
+.status-item {
+    color: #666;
+}
+
+.status-item span {
+    color: #0066FF;
+    font-weight: bold;
+}
+
+.status-item.connected span {
+    color: #00FF00;
+}
+
+.keyboard-toggle {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    color: var(--text-primary);
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.keyboard-toggle:hover {
+    border-color: #4a4a4a;
+}
+
+.keyboard-toggle.active {
+    background: #0066FF;
+    border-color: #0088FF;
+}
+
+.keyboard-container {
+    display: none;
+    background: var(--bg-primary);
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 10px;
+    min-height: 500px;
+    position: relative;
+}
+
+.keyboard-container:hover {
+    border-color: #4a4a4a;
+}
+
+.keyboard-container.visible {
+    display: block;
+}
+
+.keyboard-container:fullscreen {
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 0;
+    width: 100vw;
+    height: 100vh;
+    min-height: 0;
+}
+
+.keyboard-container:fullscreen .piano-keyboard {
+    height: 70vh;
+    width: 95vw;
+}
+
+.keyboard-container:fullscreen::after {
+    content: '✕';
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: var(--text-primary);
+    opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s;
+    pointer-events: auto;
+    background: rgba(207, 26, 55, 0.8);
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    font-weight: bold;
+}
+
+.keyboard-container:fullscreen::after:hover {
+    opacity: 1;
+    background: rgba(207, 26, 55, 1);
+}
+
+.keyboard-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.keyboard-controls label {
+    color: #888;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.keyboard-controls select {
+    flex: 1;
+    min-width: 0;
+}
+
+.octave-controls {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.octave-btn {
+    padding: 8px 15px;
+    background: var(--bg-tertiary);
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.octave-btn:hover {
+    border-color: #4a4a4a;
+}
+
+.octave-btn:active {
+    background: #0066FF;
+}
+
+.piano-keyboard {
+    display: flex;
+    height: 400px;
+    width: 100%;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    padding: 10px;
+    overflow: hidden;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.keyboard-info {
+    margin-top: 10px;
+    font-size: 10px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* ============================================================
+   RESPONSIVE STYLES
+   ============================================================ */
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .launcher-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .launcher-card {
+        padding: 30px 20px;
+    }
+
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .effects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-box {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 5px;
+    }
+
+    .launcher-grid {
+        gap: 10px;
+    }
+
+    .launcher-card {
+        padding: 20px 15px;
+    }
+
+    .top-banner {
+        padding: 0 10px;
+    }
+
+    .banner-title {
+        font-size: 0.9em;
+    }
+
+    .info-box {
+        padding: 10px;
+    }
+}
+
+/* Info/Description Box */
+.info-box {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.info-box p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.info-box ul {
+    line-height: 1.8;
+    margin: 0;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.info-box li {
+    position: relative;
+    padding-left: 0;
+}
+
+.info-box li::before {
+    content: "•";
+    color: var(--accent);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+.info-box a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.info-box a:hover {
+    border-bottom-color: var(--accent);
+}
+
+.text-center {
+    text-align: center;
+}
+
+p {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.image_header {
+    height: auto;
+    width: auto;
+    display: block;
+    max-width: 100%;
+    max-height: 400px;
+}
+
+.home-page {
+    background: var(--bg-primary);
+}
+
+a:link,
+a:visited {
+  color: var(--accent);
+}
+
+/* Hover and keyboard focus states */
+a:hover,
+a:focus {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Clicked state */
+a:active {
+  color: var(--accent-dim);
+}
