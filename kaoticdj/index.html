@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Web-based dual deck DJ controller with WebMIDI support for Korg KaossDJ">
+    <meta name="theme-color" content="#CF1A37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KaoticDJ">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <title>KaoticDJ - Dual Deck Controller</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-banner">
+        <button class="hamburger-button" id="hamburgerBtn">☰</button>
+        <div class="banner-title">KaoticDJ</div>
+        <div class="banner-status" id="midiBannerStatus">
+            <span class="status-dot" id="midiStatusDot"></span>
+            <span id="midiStatusText">No MIDI</span>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="menu-panel" id="menuPanel">
+        <button class="menu-close" id="menuClose">×</button>
+        <div class="menu-items">
+            <div style="padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
+                <label style="display: block; color: var(--text-secondary); font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">MIDI Device</label>
+                <select id="midiDeviceSelect">
+                    <option value="">No Device</option>
+                </select>
+                <button id="midiConnectBtn" style="width: 100%; margin-top: 8px;">Connect MIDI</button>
+                <button id="midiLearnBtn" style="width: 100%; margin-top: 4px;">MIDI Learn</button>
+            </div>
+
+            <div style="padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
+                <label style="display: block; color: var(--text-secondary); font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Controller Profile</label>
+                <select id="controllerProfileSelect">
+                    <option value="">Loading profiles...</option>
+                </select>
+            </div>
+
+            <div style="padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 10px;">
+                <label style="display: block; color: var(--text-secondary); font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Audio Output</label>
+                <select id="audioOutputSelect">
+                    <option value="">Default Output</option>
+                </select>
+            </div>
+
+            <label class="menu-section-label">MIDI Monitor</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <button id="clearMidiLog" style="padding: 5px 10px; font-size: 0.7em; background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa; cursor: pointer; border-radius: 3px;">Clear</button>
+                <label style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.75em;">
+                    <input type="checkbox" id="filterMidiLog" checked>
+                    <span>Filter CC</span>
+                </label>
+            </div>
+            <div id="midiLog" style="padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 10px; max-height: 200px; overflow-y: auto; color: #aaa;">
+                <div style="color: #555;">No MIDI messages</div>
+            </div>
+
+            <button class="menu-item" id="showCreditsBtn">About / Credits</button>
+        </div>
+    </div>
+
+    <!-- Credits Modal -->
+    <div class="modal-overlay" id="creditsOverlay"></div>
+    <div class="modal" id="creditsModal">
+        <div class="modal-header">
+            <h2>About KaoticDJ</h2>
+            <button class="modal-close" id="creditsClose">×</button>
+        </div>
+        <div class="modal-body">
+            <h3>KaoticDJ - Dual Deck Controller</h3>
+            <p>Web-based dual deck DJ application with WebMIDI support</p>
+            <p>Connects to Korg KaossDJ and other MIDI controllers</p>
+            <p>Real-time audio mixing with EQ, filter, and crossfader</p>
+            <p>MIDI Learn mode for custom controller mapping</p>
+            <p>
+                Uses: Web Audio API, WebMIDI API
+            </p>
+            <p style="margin-top: 20px; font-size: 0.9em; color: #999;">
+                Created by Gerard Braad &lt;me@gbraad.nl&gt;
+            </p>
+        </div>
+    </div>
+
+    <!-- MIDI Learn Modal -->
+    <div class="modal-overlay" id="midiLearnOverlay"></div>
+    <div class="modal" id="midiLearnModal">
+        <div class="modal-header">
+            <h2>🎯 MIDI Learn</h2>
+            <button class="modal-close" id="midiLearnClose">×</button>
+        </div>
+        <div class="modal-body">
+            <p>Click a control on the KaossDJ, then move it to assign.</p>
+            <p style="font-size: 0.85em; color: var(--text-secondary);">Target: <strong id="midiLearnTarget">None selected</strong></p>
+            <div id="midiLearnStatus" style="margin-top: 15px; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 12px; color: #ffaa00;">
+                Waiting for MIDI message...
+            </div>
+            <div style="margin-top: 15px;">
+                <h4 style="color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85em;">Current Mapping</h4>
+                <div id="currentMidiMapping" style="font-size: 0.85em; color: var(--text-secondary);">
+                    No mapping assigned.
+                </div>
+            </div>
+            <button id="midiLearnClearBtn" style="width: 100%; margin-top: 15px; background: #331111; border-color: var(--accent);">Clear Assignment</button>
+        </div>
+    </div>
+
+    <!-- MIDI Mapping Editor Modal -->
+    <div class="modal-overlay" id="mappingEditorOverlay"></div>
+    <div class="modal modal-wide" id="mappingEditorModal">
+        <div class="modal-header">
+            <h2>MIDI Mapping Editor</h2>
+            <button class="modal-close" id="mappingEditorClose">×</button>
+        </div>
+        <div class="modal-body" id="mappingEditorBody">
+            <!-- Filled dynamically -->
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Quick Load Row -->
+        <div class="quick-load-bar">
+            <button class="load-btn" data-deck="0">Load Deck A</button>
+            <button class="load-btn" data-deck="1">Load Deck B</button>
+        </div>
+
+        <!-- Dual Deck Layout  3 columns: Deck A | Fader Section | Deck B -->
+        <div class="decks-container">
+            <!-- Deck A (Left) -->
+            <div class="deck" id="deck-0" data-deck="0">
+                <div class="deck-header">
+                    <span class="deck-label">Deck A</span>
+                    <span class="deck-bpm" id="bpm-0">-- BPM</span>
+                </div>
+
+                <div class="deck-jog" id="jog-0">
+                    <canvas id="jogCanvas-0" width="200" height="200"></canvas>
+                    <div class="jog-overlay">
+                                            </div>
+                </div>
+
+                <div class="deck-transport">
+                    <button class="transport-btn play-btn" id="play-0" title="Play">▶</button>
+                    <button class="transport-btn cue-btn" id="cue-0" title="Cue">◉ Cue</button>
+                    <button class="transport-btn sync-btn" id="sync-0" title="Sync">⟳</button>
+                    <button class="transport-btn prev-btn" id="prev-0" title="Previous Pattern">◀◀</button>
+                    <button class="transport-btn next-btn" id="next-0" title="Next Pattern">▶▶</button>
+                    <button class="transport-btn loop-btn" id="loop-0" title="Pattern Loop">🔁</button>
+                </div>
+
+                <div class="deck-track-info" id="trackInfo-0">
+                    <div class="track-name">No track loaded</div>
+                    <div class="track-status" id="trackStatus-0"></div>
+                    <div class="track-time">
+                        <span id="currentTime-0">0:00</span>
+                        <span id="totalTime-0">0:00</span>
+                    </div>
+                    <div class="tracker-details" id="trackerDetails-0" style="display:none; font-size:0.7em; font-family:monospace; color:var(--text-secondary); margin-top:4px;"></div>
+                </div>
+
+                <div class="deck-waveform" id="waveform-0">
+                    <canvas id="waveformCanvas-0" height="60"></canvas>
+                </div>
+
+                <div class="eq-group" data-deck="0">
+                    <pad-knob id="eqKnob-Hi-0" cc="71" value="64" min="0" max="127" default="64" label="Hi" sublabel="dB"></pad-knob>
+                    <pad-knob id="eqKnob-Mid-0" cc="72" value="64" min="0" max="127" default="64" label="Mid" sublabel="dB"></pad-knob>
+                    <pad-knob id="eqKnob-Low-0" cc="73" value="64" min="0" max="127" default="64" label="Low" sublabel="dB"></pad-knob>
+                    <pad-knob id="eqKnob-Filter-0" cc="74" value="127" min="0" max="127" default="127" label="Filter" sublabel="%"></pad-knob>
+                </div>
+            </div>
+
+            <!-- Fader Section (Middle column) -->
+            <div class="fader-section">
+                <div class="fader-section-top">
+                    <div class="channel-fader" data-deck="0">
+                        <div class="fader-label">Vol A</div>
+                        <div class="fader-track-vertical" data-fader="0">
+                            <div class="fader-thumb" id="faderThumb-0"></div>
+                        </div>
+                        <div class="fader-value" id="faderVal-0">100%</div>
+                    </div>
+
+                    <div class="channel-fader" data-deck="1">
+                        <div class="fader-label">Vol B</div>
+                        <div class="fader-track-vertical" data-fader="1">
+                            <div class="fader-thumb" id="faderThumb-1"></div>
+                        </div>
+                        <div class="fader-value" id="faderVal-1">100%</div>
+                    </div>
+                </div>
+
+                <div class="crossfader-area">
+                    <div class="fader-label">Crossfader</div>
+                    <div class="fader-track-horizontal" id="crossfaderTrack">
+                        <div class="crossfader-thumb" id="crossfaderThumb"></div>
+                    </div>
+                    <div class="xfade-indicator">
+                        <span class="xfade-a">A</span>
+                        <span class="xfade-val" id="crossfaderVal">Center</span>
+                        <span class="xfade-b">B</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deck B (Right) -->
+            <div class="deck" id="deck-1" data-deck="1">
+                <div class="deck-header">
+                    <span class="deck-label">Deck B</span>
+                    <span class="deck-bpm" id="bpm-1">-- BPM</span>
+                </div>
+
+                <div class="deck-jog" id="jog-1">
+                    <canvas id="jogCanvas-1" width="200" height="200"></canvas>
+                    <div class="jog-overlay">
+                                            </div>
+                </div>
+
+                <div class="deck-transport">
+                    <button class="transport-btn play-btn" id="play-1" title="Play">▶</button>
+                    <button class="transport-btn cue-btn" id="cue-1" title="Cue">◉ Cue</button>
+                    <button class="transport-btn sync-btn" id="sync-1" title="Sync">⟳</button>
+                    <button class="transport-btn prev-btn" id="prev-1" title="Previous Pattern">◀◀</button>
+                    <button class="transport-btn next-btn" id="next-1" title="Next Pattern">▶▶</button>
+                    <button class="transport-btn loop-btn" id="loop-1" title="Pattern Loop">🔁</button>
+                </div>
+
+                <div class="deck-track-info" id="trackInfo-1">
+                    <div class="track-name">No track loaded</div>
+                    <div class="track-status" id="trackStatus-1"></div>
+                    <div class="track-time">
+                        <span id="currentTime-1">0:00</span>
+                        <span id="totalTime-1">0:00</span>
+                    </div>
+                    <div class="tracker-details" id="trackerDetails-1" style="display:none; font-size:0.7em; font-family:monospace; color:var(--text-secondary); margin-top:4px;"></div>
+                </div>
+
+                <div class="deck-waveform" id="waveform-1">
+                    <canvas id="waveformCanvas-1" height="60"></canvas>
+                </div>
+
+                <div class="eq-group" data-deck="1">
+                    <pad-knob id="eqKnob-Hi-1" cc="75" value="64" min="0" max="127" default="64" label="Hi" sublabel="dB"></pad-knob>
+                    <pad-knob id="eqKnob-Mid-1" cc="76" value="64" min="0" max="127" default="64" label="Mid" sublabel="dB"></pad-knob>
+                    <pad-knob id="eqKnob-Low-1" cc="77" value="64" min="0" max="127" default="64" label="Low" sublabel="dB"></pad-knob>
+                    <pad-knob id="eqKnob-Filter-1" cc="78" value="127" min="0" max="127" default="127" label="Filter" sublabel="%"></pad-knob>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item" id="deckStatus-0">
+                Deck A: <span>Stopped</span>
+            </div>
+            <div class="status-item" id="midiMonitorStatus">
+                MIDI: <span class="disconnected">Disconnected</span>
+            </div>
+            <div class="status-item" id="deckStatus-1">
+                Deck B: <span>Stopped</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file inputs for each deck -->
+    <input type="file" id="fileInput-0" accept="audio/*,.mod,.med,.ahx,.sid,.xm,.s3m,.it" style="display:none">
+    <input type="file" id="fileInput-1" accept="audio/*,.mod,.med,.ahx,.sid,.xm,.s3m,.it" style="display:none">
+
+    <!-- Pad Knob component (inlined for self-contained app) -->
+    <script>
+    class PadKnob extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+            this.isDragging = false;
+            this.startY = 0;
+            this.startValue = 0;
+        }
+
+        static get observedAttributes() {
+            return ['cc', 'value', 'min', 'max', 'label', 'sublabel', 'default'];
+        }
+
+        connectedCallback() {
+            this.render();
+            this.setupEventListeners();
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (oldValue !== newValue) {
+                if (name === 'value' || name === 'min' || name === 'max') {
+                    this.updateKnob();
+                } else if (name === 'label') {
+                    this.updateLabel();
+                }
+            }
+        }
+
+        render() {
+            const label = this.getAttribute('label') || 'CC';
+            const sublabel = this.getAttribute('sublabel') || '';
+            const cc = this.getAttribute('cc') || '1';
+            const value = parseInt(this.getAttribute('value') || '64');
+            const min = parseInt(this.getAttribute('min') || '0');
+            const max = parseInt(this.getAttribute('max') || '127');
+
+            const percentage = ((value - min) / (max - min)) * 100;
+            const rotation = (percentage / 100) * 270 - 135;
+
+            this.shadowRoot.innerHTML = `
+                <style>
+                    :host {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 4px;
+                        padding: 6px;
+                        box-sizing: border-box;
+                        user-select: none;
+                        -webkit-user-select: none;
+                        touch-action: none;
+                    }
+                    .knob-label {
+                        font-size: 0.72em;
+                        font-weight: bold;
+                        color: #d0d0d0;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        text-align: center;
+                    }
+                    .knob-sublabel {
+                        font-size: 0.6em;
+                        color: #666;
+                        text-align: center;
+                    }
+                    .knob-container {
+                        position: relative;
+                        width: 100%;
+                        aspect-ratio: 1 / 1;
+                        max-width: 64px;
+                        flex-shrink: 0;
+                        margin: 0 auto;
+                    }
+                    .knob-track {
+                        position: absolute;
+                        inset: 0;
+                        border-radius: 50%;
+                        background: #1a1a1a;
+                        border: 2px solid #333;
+                    }
+                    .knob-indicator {
+                        position: absolute;
+                        top: 10%;
+                        left: 50%;
+                        width: 3px;
+                        height: 40%;
+                        background: #CF1A37;
+                        border-radius: 2px;
+                        transform-origin: bottom center;
+                        transform: translateX(-50%) rotate(${rotation}deg);
+                        transition: transform 0.03s linear;
+                    }
+                    .knob-center {
+                        position: absolute;
+                        inset: 30%;
+                        border-radius: 50%;
+                        background: #2a2a2a;
+                        cursor: grab;
+                    }
+                    .knob-center:active { cursor: grabbing; }
+                    .knob-value {
+                        font-size: 0.75em;
+                        font-weight: bold;
+                        color: #aaa;
+                        text-align: center;
+                        padding: 2px 6px;
+                        background: #0a0a0a;
+                        border-radius: 3px;
+                        min-width: 28px;
+                    }
+                </style>
+                <div class="knob-label">${label}</div>
+                <div class="knob-container">
+                    <div class="knob-track"></div>
+                    <div class="knob-indicator"></div>
+                    <div class="knob-center"></div>
+                </div>
+                <div class="knob-value">${value}</div>
+                ${sublabel ? `<div class="knob-sublabel">${sublabel}</div>` : ''}
+            `;
+        }
+
+        updateKnob() {
+            const value = parseInt(this.getAttribute('value') || '64');
+            const min = parseInt(this.getAttribute('min') || '0');
+            const max = parseInt(this.getAttribute('max') || '127');
+            const percentage = ((value - min) / (max - min)) * 100;
+            const rotation = (percentage / 100) * 270 - 135;
+
+            const indicator = this.shadowRoot.querySelector('.knob-indicator');
+            const valueDisplay = this.shadowRoot.querySelector('.knob-value');
+            if (indicator) {
+                indicator.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+            }
+            if (valueDisplay) {
+                valueDisplay.textContent = value;
+            }
+        }
+
+        updateLabel() {
+            const labelDisplay = this.shadowRoot?.querySelector('.knob-label');
+            if (!labelDisplay) return;
+            const label = this.getAttribute('label') || 'CC';
+            labelDisplay.textContent = label;
+        }
+
+        setupEventListeners() {
+            const knobCenter = this.shadowRoot.querySelector('.knob-center');
+            if (!knobCenter) return;
+
+            const handleStart = (e) => {
+                this.isDragging = true;
+                this.startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                this.startValue = parseInt(this.getAttribute('value') || '64');
+                e.preventDefault();
+            };
+
+            const handleMove = (e) => {
+                if (!this.isDragging) return;
+                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                const deltaY = this.startY - clientY;
+                const min = parseInt(this.getAttribute('min') || '0');
+                const max = parseInt(this.getAttribute('max') || '127');
+                const range = max - min;
+                const sensitivity = range / 100;
+                const newValue = Math.max(min, Math.min(max, Math.round(this.startValue + deltaY * sensitivity)));
+
+                this.setAttribute('value', newValue);
+
+                const cc = parseInt(this.getAttribute('cc') || '1');
+                this.dispatchEvent(new CustomEvent('cc-change', {
+                    detail: { cc, value: newValue },
+                    bubbles: true,
+                    composed: true
+                }));
+                e.preventDefault();
+            };
+
+            const handleEnd = () => { this.isDragging = false; };
+
+            knobCenter.addEventListener('mousedown', handleStart);
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', handleEnd);
+            knobCenter.addEventListener('touchstart', handleStart, { passive: false });
+            document.addEventListener('touchmove', handleMove, { passive: false });
+            document.addEventListener('touchend', handleEnd);
+
+            knobCenter.addEventListener('dblclick', (e) => {
+                const defaultValue = this.getAttribute('default');
+                if (defaultValue !== null) {
+                    const resetValue = parseInt(defaultValue);
+                    const min = parseInt(this.getAttribute('min') || '0');
+                    const max = parseInt(this.getAttribute('max') || '127');
+                    const clampedValue = Math.max(min, Math.min(max, resetValue));
+                    this.setAttribute('value', clampedValue);
+                    const cc = parseInt(this.getAttribute('cc') || '1');
+                    this.dispatchEvent(new CustomEvent('cc-change', {
+                        detail: { cc, value: clampedValue },
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        }
+    }
+    customElements.define('pad-knob', PadKnob);
+    </script>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

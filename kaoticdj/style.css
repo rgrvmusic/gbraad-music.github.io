@@ -1,0 +1,814 @@
+/* ============================================================
+   KAOTIC DJ - DUAL DECK CONTROLLER
+   ============================================================ */
+
+/* CSS Variables */
+:root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --accent: #CF1A37;
+    --accent-dim: #a01528;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --border: #333333;
+    --shadow: rgba(207, 26, 55, 0.3);
+    --deck-a-color: #ff4444;
+    --deck-b-color: #4488ff;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ============================================================
+   TOP BANNER
+   ============================================================ */
+.top-banner {
+    background: var(--accent);
+    padding: 0 20px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.banner-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.banner-status {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+    opacity: 0.9;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #666;
+    transition: background 0.3s;
+}
+
+.status-dot.connected {
+    background: #00ff00;
+    box-shadow: 0 0 6px #00ff00;
+}
+
+.status-dot.learning {
+    background: #ffaa00;
+    box-shadow: 0 0 6px #ffaa00;
+    animation: pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ============================================================
+   CONTAINER & LAYOUT
+   ============================================================ */
+.container {
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px;
+}
+
+/* ============================================================
+   HAMBURGER MENU
+   ============================================================ */
+.hamburger-button {
+    background: none;
+    border: none;
+    color: white !important;
+    font-size: 1.8em;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: opacity 0.2s;
+    line-height: 1;
+    width: auto !important;
+}
+
+.hamburger-button:active,
+.hamburger-button:focus {
+    background: none !important;
+    outline: none;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.menu-overlay.active { display: block; }
+
+.menu-panel {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 320px;
+    height: 100vh;
+    background: var(--bg-secondary);
+    z-index: 1000;
+    transition: left 0.3s ease;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.menu-panel.active {
+    left: 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.menu-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 2em;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.2s;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.menu-close:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-items { margin-top: 60px; }
+
+.menu-section-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.menu-item {
+    display: block;
+    width: 100%;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 1em;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 5px;
+    transition: background 0.2s;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.menu-item:hover { background: #3a3a3a; }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+}
+
+.modal-overlay.active { display: block; }
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1002;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-wide { max-width: 700px; }
+.modal.active { display: block; }
+
+.modal-header {
+    background: var(--accent);
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.3em;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 2em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    transition: opacity 0.2s;
+}
+
+.modal-close:hover { opacity: 0.7; }
+
+.modal-body {
+    padding: 25px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-body h3 {
+    margin: 0 0 5px 0;
+    color: var(--accent);
+    font-size: 1.5em;
+}
+
+.modal-body h4 {
+    margin: 15px 0 5px 0;
+    color: var(--accent);
+    font-size: 1.1em;
+}
+
+.modal-body p {
+    margin: 10px 0;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   COMMON CONTROLS
+   ============================================================ */
+button, select {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+}
+
+button:hover, select:hover {
+    border-color: #4a4a4a;
+    background: #3a3a3a;
+}
+
+button:active {
+    background: #0066FF;
+    color: #fff;
+}
+
+button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+select:focus {
+    outline: none;
+    border-color: #0066FF !important;
+}
+
+/* ============================================================
+   QUICK LOAD BAR
+   ============================================================ */
+.quick-load-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.load-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 0.9em;
+    font-weight: bold;
+    background: var(--bg-secondary);
+    border: 2px dashed var(--border);
+    transition: all 0.2s;
+}
+
+.load-btn:hover {
+    border-color: #4a4a4a;
+    background: #2a2a2a;
+}
+
+.load-btn[data-deck="0"]:hover { border-color: var(--deck-a-color); }
+.load-btn[data-deck="1"]:hover { border-color: var(--deck-b-color); }
+
+/* ============================================================
+   DECK CONTAINER GRID  3 columns: Deck A | Fader Section | Deck B
+   ============================================================ */
+.decks-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.deck {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#deck-0 { border-left: 3px solid var(--deck-a-color); }
+#deck-1 { border-right: 3px solid var(--deck-b-color); }
+
+/* ============================================================
+   FADER SECTION (middle column)
+   ============================================================ */
+.fader-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.fader-section-top {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* ============================================================
+   DECK HEADER
+   ============================================================ */
+.deck-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+
+.deck-label {
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#deck-0 .deck-label { color: var(--deck-a-color); }
+#deck-1 .deck-label { color: var(--deck-b-color); }
+
+.deck-bpm {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+/* ============================================================
+   JOG WHEEL
+   ============================================================ */
+.deck-jog {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+}
+
+.deck-jog canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg-primary);
+}
+
+.deck-jog:hover canvas { border-color: #4a4a4a; }
+#deck-0 .deck-jog:hover canvas { border-color: var(--deck-a-color); }
+#deck-1 .deck-jog:hover canvas { border-color: var(--deck-b-color); }
+
+.jog-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    text-align: center;
+}
+
+/* ============================================================
+   TRANSPORT
+   ============================================================ */
+.deck-transport {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.transport-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    border-radius: 4px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.transport-btn:hover {
+    border-color: #4a4a4a;
+    background: #3a3a3a;
+}
+
+.transport-btn:active { transform: scale(0.95); }
+
+.play-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.cue-btn.active  { background: #ffaa00; border-color: #ffaa00; color: #000; }
+.sync-btn.active { background: #0066FF; border-color: #0066FF; }
+.loop-btn.active { background: #CFB41A; border-color: #CFB41A; }
+.prev-btn, .next-btn { font-size: 0.7em; min-width: 28px; color: var(--text-secondary); }
+.prev-btn:hover, .next-btn:hover { background: var(--surface-hover); border-color: var(--accent); }
+
+/* ============================================================
+   TRACK INFO & WAVEFORM
+   ============================================================ */
+.deck-track-info {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.track-name {
+    font-size: 0.8em;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+}
+
+.track-status {
+    font-size: 0.7em;
+    color: #ffaa00;
+    margin-bottom: 3px;
+    min-height: 1em;
+    font-style: italic;
+}
+
+.track-status.ready {
+    color: #44dd44;
+    font-style: normal;
+}
+
+.track-status.error {
+    color: var(--accent);
+    font-style: normal;
+}
+
+.tracker-details {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.7em;
+    font-family: monospace;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.tracker-details span {
+    padding: 2px 4px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+}
+
+.track-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7em;
+    font-family: monospace;
+    color: var(--text-secondary);
+}
+
+.deck-waveform {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    height: 50px;
+    overflow: hidden;
+}
+
+.deck-waveform canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ============================================================
+   EQ GROUP (inside each deck)
+   ============================================================ */
+.eq-group {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    padding: 8px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+/* ============================================================
+   FADER SECTION - Channel Faders (two vertical, side by side)
+   ============================================================ */
+.channel-fader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+}
+
+.fader-label {
+    font-size: 0.65em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.fader-track-vertical {
+    position: relative;
+    width: 28px;
+    height: 160px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    touch-action: none;
+}
+
+.fader-track-vertical .fader-thumb {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    height: 20px;
+    border: 1px solid;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: bottom 0.05s;
+}
+
+.channel-fader[data-deck="0"] .fader-thumb {
+    background: var(--deck-a-color);
+    border-color: #ff8888;
+}
+
+.channel-fader[data-deck="1"] .fader-thumb {
+    background: var(--deck-b-color);
+    border-color: #88aaff;
+}
+
+.fader-value {
+    font-size: 0.65em;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.channel-fader[data-deck="0"] .fader-value { color: var(--deck-a-color); }
+.channel-fader[data-deck="1"] .fader-value { color: var(--deck-b-color); }
+
+/* ============================================================
+   FADER SECTION - Crossfader (bottom row, full width)
+   ============================================================ */
+.crossfader-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.fader-track-horizontal {
+    position: relative;
+    width: 100%;
+    height: 28px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    touch-action: none;
+}
+
+.crossfader-thumb {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: 22px;
+    background: #ccc;
+    border: 1px solid #fff;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: left 0.05s;
+}
+
+.xfade-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 0.65em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.xfade-a { color: var(--deck-a-color); font-weight: bold; }
+.xfade-b { color: var(--deck-b-color); font-weight: bold; }
+.xfade-val { color: var(--text-secondary); font-family: monospace; }
+
+/* ============================================================
+   STATUS BAR
+   ============================================================ */
+.status-bar {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 8px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75em;
+}
+
+.status-item { color: var(--text-secondary); }
+.status-item span { color: var(--text-primary); font-weight: bold; }
+.status-item span.connected { color: #00ff00; }
+.status-item span.disconnected { color: var(--accent); }
+
+/* ============================================================
+   MAPPING TABLE
+   ============================================================ */
+.mapping-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+}
+
+.mapping-table th {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 0.75em;
+    letter-spacing: 1px;
+}
+
+.mapping-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.mapping-table .ctrl-name { color: #0066FF; font-weight: bold; }
+.mapping-table .midi-msg {
+    font-family: monospace;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+}
+
+.mapping-table .unmapped { color: #664400; font-style: italic; }
+
+/* ============================================================
+   MIDI MONITOR
+   ============================================================ */
+#midiLog { font-size: 9px !important; }
+#midiLog .midi-note-on  { color: #44dd44; }
+#midiLog .midi-note-off { color: #668866; }
+#midiLog .midi-cc       { color: #44aaff; }
+#midiLog .midi-clock    { color: #884488; }
+
+/* ============================================================
+   MAPPING ENTRIES
+   ============================================================ */
+.mapping-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8em;
+}
+
+.mapping-entry:last-child { border-bottom: none; }
+.mapping-entry .entry-name { color: var(--text-primary); font-weight: bold; }
+.mapping-entry .entry-midi { color: var(--text-secondary); font-family: monospace; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+    .decks-container {
+        grid-template-columns: 1fr;
+    }
+
+    .fader-section {
+        max-width: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        grid-column: 1;
+    }
+
+    .fader-section-top {
+        flex: 1;
+    }
+
+    .crossfader-area {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .deck-jog {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container { padding: 8px; }
+    .menu-panel { width: 100%; }
+    .fader-track-vertical { height: 100px; }
+    .fader-section { flex-direction: column; }
+    .quick-load-bar { flex-direction: column; }
+}

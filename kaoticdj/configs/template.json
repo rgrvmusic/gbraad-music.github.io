@@ -1,0 +1,130 @@
+{
+  "id": "your-device-id",
+  "name": "Your Device Name",
+  "manufacturer": "Manufacturer",
+  "category": "Controller",
+  "description": "Description of your device and its controls",
+
+  "deckConfig": {
+    "count": 2,
+    "type": "audio",
+    "midiBaseChannel": 0
+  },
+
+  "sections": [
+    {
+      "title": "Deck A",
+      "deck": 0,
+      "midiChannel": 0,
+      "color": "#ff4444",
+      "controls": [
+        {
+          "id": "eqHi",
+          "type": "knob",
+          "label": "EQ Hi",
+          "description": "High frequency EQ shelf (audio deck) or effect parameter (rfx player)",
+          "cc": 71,
+          "min": 0,
+          "max": 127,
+          "default": 64,
+          "unit": "dB"
+        },
+        {
+          "id": "eqMid",
+          "type": "knob",
+          "label": "EQ Mid",
+          "cc": 72,
+          "min": 0,
+          "max": 127,
+          "default": 64,
+          "unit": "dB"
+        },
+        {
+          "id": "eqLow",
+          "type": "knob",
+          "label": "EQ Low",
+          "cc": 73,
+          "min": 0,
+          "max": 127,
+          "default": 64,
+          "unit": "dB"
+        },
+        {
+          "id": "filter",
+          "type": "knob",
+          "label": "Filter",
+          "cc": 74,
+          "min": 0,
+          "max": 127,
+          "default": 64
+        },
+        {
+          "id": "fader",
+          "type": "knob",
+          "label": "Volume",
+          "cc": 7,
+          "min": 0,
+          "max": 127,
+          "default": 100
+        },
+        {
+          "id": "play",
+          "type": "pad",
+          "label": "Play",
+          "note": 37,
+          "description": "Toggle play/pause (note-on toggles state)"
+        },
+        {
+          "id": "cue",
+          "type": "pad",
+          "label": "Cue",
+          "note": 39
+        },
+        {
+          "id": "sync",
+          "type": "pad",
+          "label": "Sync",
+          "note": 13
+        },
+        {
+          "id": "loop",
+          "type": "pad",
+          "label": "Loop",
+          "note": 15
+        }
+      ]
+    },
+    {
+      "title": "Deck B",
+      "deck": 1,
+      "midiChannel": 1,
+      "color": "#4488ff",
+      "controls": [
+        { "id": "eqHi",     "type": "knob", "label": "EQ Hi",       "cc": 75, "default": 64 },
+        { "id": "eqMid",    "type": "knob", "label": "EQ Mid",      "cc": 76, "default": 64 },
+        { "id": "eqLow",    "type": "knob", "label": "EQ Low",      "cc": 77, "default": 64 },
+        { "id": "filter",   "type": "knob", "label": "Filter",      "cc": 78, "default": 64 },
+        { "id": "fader",    "type": "knob", "label": "Volume",      "cc": 7,  "default": 100 },
+        { "id": "play",     "type": "pad",  "label": "Play",        "note": 37 },
+        { "id": "cue",      "type": "pad",  "label": "Cue",         "note": 39 },
+        { "id": "sync",     "type": "pad",  "label": "Sync",        "note": 13 },
+        { "id": "loop",     "type": "pad",  "label": "Loop",        "note": 15 }
+      ]
+    },
+    {
+      "title": "Master",
+      "controls": [
+        {
+          "id": "crossfader",
+          "type": "knob",
+          "label": "Crossfader",
+          "cc": 8,
+          "channel": 0,
+          "min": 0,
+          "max": 127,
+          "default": 64
+        }
+      ]
+    }
+  ]
+}

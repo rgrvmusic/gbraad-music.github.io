@@ -1,0 +1,16 @@
+{
+  "devices": [
+    {
+      "file": "kaossdj.json",
+      "manufacturer": "KORG",
+      "name": "KaossDJ",
+      "category": "DJ Controller"
+    },
+    {
+      "file": "template.json",
+      "manufacturer": "",
+      "name": "Template",
+      "category": "Template"
+    }
+  ]
+}
