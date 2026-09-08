@@ -1,0 +1,23 @@
+{
+  "name": "Hakkuh",
+  "short_name": "Hakkuh",
+  "description": "A gabber kick sequencer for the real hakken!",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#CF1A37",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["music", "entertainment", "multimedia", "utilities"]
+}

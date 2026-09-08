@@ -3,12 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Hakkuh">
+    <meta name="description" content="A gabber kick sequencer for the real hakken!">
     <meta name="theme-color" content="#CF1A37">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Hakkuh">
     <title>Regroove Hakkuh</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
 
     <!-- Icons -->
     <link rel="icon" type="image/png" sizes="96x96" href="favicon.png">
@@ -16,242 +20,92 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
 
-    <style>
-        :root {
-            --accent: #CF1A37;
-            --bg-secondary: #1a1a1a;
-            --bg-tertiary: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #aaaaaa;
-            --border: #333333;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        .content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Top Banner */
-        .top-banner {
-            background: var(--accent);
-            padding: 0 20px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            position: relative;
-            z-index: 100;
-            flex-shrink: 0;
-        }
-
-        .hamburger-button {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 1.8em;
-            cursor: pointer;
-            padding: 5px 10px;
-            transition: opacity 0.2s;
-            line-height: 1;
-        }
-
-        .hamburger-button:hover {
-            opacity: 0.8;
-        }
-
-        .banner-title {
-            font-size: 1.1em;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-primary);
-        }
-
-        /* Hamburger Menu */
-        .menu-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .menu-overlay.active {
-            display: block;
-        }
-
-        .menu-panel {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 300px;
-            height: 100vh;
-            background: var(--bg-secondary);
-            z-index: 1000;
-            transition: left 0.3s ease;
-            padding: 20px;
-        }
-
-        .menu-panel.active {
-            left: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .menu-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 2em;
-            cursor: pointer;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-
-        .menu-close:hover {
-            color: var(--text-primary);
-        }
-
-        .menu-items {
-            margin-top: 60px;
-        }
-
-        .menu-item {
-            display: block;
-            width: 100%;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            font-size: 1em;
-            cursor: pointer;
-            text-align: left;
-            border-radius: 5px;
-            transition: background 0.2s;
-        }
-
-        .menu-item:hover {
-            background: #3a3a3a;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1001;
-        }
-
-        .modal-overlay.active {
-            display: block;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 500px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            z-index: 1002;
-        }
-
-        .modal.active {
-            display: block;
-        }
-
-        .modal-header {
-            background: var(--accent);
-            padding: 15px 20px;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.3em;
-            color: var(--text-primary);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 2em;
-            cursor: pointer;
-            line-height: 1;
-            padding: 0;
-            margin: 0;
-            transition: opacity 0.2s;
-        }
-
-        .modal-close:hover {
-            opacity: 0.7;
-        }
-
-        .modal-body {
-            padding: 25px;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        .modal-body h3 {
-            margin: 0 0 5px 0;
-            color: var(--accent);
-            font-size: 1.5em;
-        }
-
-        .modal-body p {
-            margin: 10px 0;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- HTML top bar - replaces the native ImGui banner on WASM. The
+         hamburger opens/closes the in-app SETTINGS view by calling the
+         exported hakkuh_toggle_settings() function. -->
     <div class="top-banner">
+        <button class="hamburger-button" id="hamburgerBtn" title="Settings">☰</button>
         <div class="banner-title">Regroove Hakkuh</div>
     </div>
 
-    Available soon... but you have to wait a bit longer ! ;-)
+    <!-- Content area with canvas -->
+    <div class="content">
+        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
 
+    <script type='text/javascript'>
+        var pendingSettingsToggle = false;
+
+        function settingsReady() {
+            return typeof Module !== 'undefined' && Module.calledRun &&
+                   typeof Module._hakkuh_toggle_settings === 'function';
+        }
+
+        function doToggleSettings() {
+            if (settingsReady()) {
+                Module._hakkuh_toggle_settings();
+            } else {
+                // Runtime not up yet - fire the toggle as soon as it is.
+                pendingSettingsToggle = true;
+            }
+        }
+
+        var Module = {
+            canvas: document.getElementById('canvas'),
+            setStatus: function(text) {},
+            monitorRunDependencies: function(left) {},
+            onRuntimeInitialized: function() {
+                if (pendingSettingsToggle) {
+                    pendingSettingsToggle = false;
+                    Module._hakkuh_toggle_settings();
+                }
+            }
+        };
+
+        // The hamburger toggles the in-app settings view (native banner's job
+        // elsewhere). Its first tap is also a user activation, so Web MIDI
+        // access - requested lazily from inside hakkuh_toggle_settings - can
+        // show its permission prompt.
+        document.getElementById('hamburgerBtn').addEventListener('click', function() {
+            doToggleSettings();
+        });
+
+        // Browsers start the AudioContext suspended; it must be resumed from a
+        // user gesture before any sound plays. Keep (re)attempting on every
+        // interaction until it is actually running.
+        function resumeAudio() {
+            var ctx = null;
+            if (typeof SDL3 !== 'undefined' && SDL3.audioContext) {
+                ctx = SDL3.audioContext;
+            } else if (typeof SDL !== 'undefined' && SDL.audioContext) {
+                ctx = SDL.audioContext;
+            } else if (typeof Module !== 'undefined' && Module.SDL3 && Module.SDL3.audioContext) {
+                ctx = Module.SDL3.audioContext;
+            }
+            if (ctx && typeof ctx.resume === 'function' && ctx.state === 'suspended') {
+                ctx.resume();
+            }
+        }
+        document.addEventListener('pointerdown', resumeAudio);
+        document.addEventListener('keydown', resumeAudio);
+
+        // Register service worker for PWA support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./service-worker.js').then(
+                    function(registration) {
+                        console.log('ServiceWorker registered:', registration.scope);
+                    },
+                    function(err) {
+                        console.log('ServiceWorker registration failed:', err);
+                    }
+                );
+            });
+        }
+    </script>
+    <script async type="text/javascript" src="hakkuh.js"></script>
 </body>
 </html>
